@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discord Presence Tracker</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #1b0f2e, #2e1a47, #3b0f63);
+      color: #fff;
+      margin: 0;
+      padding: 20px;
+      min-height: 100vh;
+    }
+    h1 {
+      font-size: 28px;
+      margin-bottom: 20px;
+      text-align: center;
+      color: #d5b3ff;
+      text-shadow: 0 0 6px #9d4edd;
+    }
+    .card {
+      background: rgba(50, 20, 80, 0.85);
+      border-radius: 12px;
+      padding: 20px;
+      margin: 20px auto;
+      max-width: 800px;
+      box-shadow: 0 0 20px rgba(157, 78, 221, 0.4);
+      border: 1px solid rgba(157, 78, 221, 0.3);
+    }
+    h2 {
+      margin-top: 0;
+      font-size: 20px;
+      color: #e0c3ff;
+    }
+    .sessions {
+      max-height: 350px;
+      overflow-y: auto;
+      padding-right: 5px;
+    }
+    .session {
+      background: rgba(90, 40, 140, 0.7);
+      padding: 12px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 14px;
+      transition: transform 0.2s, background 0.3s;
+      border: 1px solid rgba(157, 78, 221, 0.3);
+    }
+    .session:hover {
+      transform: translateY(-3px);
+      background: rgba(120, 60, 180, 0.8);
+    }
+    .time {
+      font-family: monospace;
+      color: #d5b3ff;
+    }
+    button {
+      background: linear-gradient(135deg, #7b2cbf, #9d4edd);
+      color: #fff;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 15px;
+      font-size: 14px;
+      font-weight: 600;
+      transition: background 0.3s, transform 0.2s;
+      box-shadow: 0 0 10px rgba(157, 78, 221, 0.4);
+    }
+    button:hover {
+      background: linear-gradient(135deg, #9d4edd, #c77dff);
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+<body>
+  <h1>💜 Discord Presence Tracker</h1>
+
+  <div class="card">
+    <h2>Total Tracked Time</h2>
+    <p id="total-seconds">Loading...</p>
+    <p id="total-formatted"></p>
+  </div>
+
+  <div class="card">
+    <h2>Session History</h2>
+    <div class="sessions" id="sessions"></div>
+  </div>
+
+  <script>
+    async function fetchTracking() {
+      try {
+        const res = await fetch("https://corsproxy.io/?url=http://api.joshua.moe/tracking");
+        const data = await res.json();
+
+        document.getElementById("total-seconds").textContent =
+          data.total_tracked_time_seconds + " seconds";
+        document.getElementById("total-formatted").textContent =
+          "(" + data.total_tracked_time_formatted + ")";
+
+        const sessionsDiv = document.getElementById("sessions");
+        sessionsDiv.innerHTML = "";
+        data.sessions.forEach(s => {
+          const div = document.createElement("div");
+          div.className = "session";
+          div.innerHTML = `
+            <div>
+              <div><strong>${s.start}</strong></div>
+              <div>→ ${s.end ?? "Active"}</div>
+            </div>
+            <div class="time">${s.duration_seconds} s</div>
+          `;
+          sessionsDiv.appendChild(div);
+        });
+      } catch (err) {
+        console.error("Failed to fetch:", err);
+      }
+    }
+
+    fetchTracking();
+    setInterval(fetchTracking, 5000);
+  </script>
+</body>
+</html>
