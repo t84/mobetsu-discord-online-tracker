@@ -58,23 +58,6 @@
       font-family: monospace;
       color: #d5b3ff;
     }
-    button {
-      background: linear-gradient(135deg, #7b2cbf, #9d4edd);
-      color: #fff;
-      border: none;
-      padding: 10px 16px;
-      border-radius: 8px;
-      cursor: pointer;
-      margin-top: 15px;
-      font-size: 14px;
-      font-weight: 600;
-      transition: background 0.3s, transform 0.2s;
-      box-shadow: 0 0 10px rgba(157, 78, 221, 0.4);
-    }
-    button:hover {
-      background: linear-gradient(135deg, #9d4edd, #c77dff);
-      transform: scale(1.05);
-    }
   </style>
 </head>
 <body>
@@ -104,7 +87,8 @@
 
         const sessionsDiv = document.getElementById("sessions");
         sessionsDiv.innerHTML = "";
-        data.sessions.forEach(s => {
+
+        [...data.sessions].reverse().forEach(s => {
           const div = document.createElement("div");
           div.className = "session";
           div.innerHTML = `
